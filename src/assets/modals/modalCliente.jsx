@@ -8,7 +8,6 @@ export default function ModalCliente({ onClose }) {
   const [telefone, setTelefone] = useState("");
 
   const salvar = () => {
-    // Aqui você pode fazer a chamada à sua API
     console.log("Salvar cliente:", { nome, email, endereco, cpf, telefone });
     onClose();
   };

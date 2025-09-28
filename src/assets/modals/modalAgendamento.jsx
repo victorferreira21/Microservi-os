@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import api from "../services/api";
+import "../style/Modal.css";
 
 export default function ModalAgendamento({ onClose }) {
   const [cliente, setCliente] = useState("");
@@ -6,119 +8,138 @@ export default function ModalAgendamento({ onClose }) {
   const [veterinario, setVeterinario] = useState("");
   const [dataHora, setDataHora] = useState("");
 
-  // Lista de agendamentos
-  const [agendamentos, setAgendamentos] = useState([]);
+  const [consultas, setConsultas] = useState([]);
 
-  // Cadastrar nova consulta
+  const formatarDataHora = (valor) => {
+    return valor && valor.length === 16 ? valor + ":00" : valor;
+  };
+
+  const formatarParaInput = (valor) => {
+    if (!valor) return "";
+    return valor.substring(0, 16);
+  };
+
+  // 🔹 Buscar consultas
+  useEffect(() => {
+    api
+      .get("/consultas") // já está com baseURL http://localhost:8080/api/v1
+      .then((res) => setConsultas(res.data))
+      .catch((err) => console.error("Erro ao buscar consultas:", err));
+  }, []);
+
+  // 🔹 Salvar nova consulta
   const salvar = () => {
-    if (!cliente || !pet || !veterinario || !dataHora) return;
-    const novo = {
-      id: Date.now(),
+    if (!cliente || !pet || !veterinario || !dataHora) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    const nova = {
       cliente,
       pet,
       veterinario,
-      dataHora,
+      dataHora: formatarDataHora(dataHora),
     };
-    setAgendamentos((prev) => [...prev, novo]);
 
-    // Limpa os campos
-    setCliente("");
-    setPet("");
-    setVeterinario("");
-    setDataHora("");
+    api
+      .post("/consultas", nova)
+      .then(() => {
+        return api.get("/consultas");
+      })
+      .then((res) => {
+        setConsultas(res.data);
+        setCliente("");
+        setPet("");
+        setVeterinario("");
+        setDataHora("");
+      })
+      .catch((err) => console.error("Erro ao salvar consulta:", err));
   };
 
-  // Alterar data/hora
-  const alterarData = (id, novaData) => {
-    setAgendamentos((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, dataHora: novaData } : a))
-    );
-  };
-
-  // Cancelar consulta
   const cancelarConsulta = (id) => {
-    setAgendamentos((prev) => prev.filter((a) => a.id !== id));
+    api
+      .put(`/consultas/${id}/cancelar`)
+      .then(() => {
+        setConsultas((prev) => prev.filter((c) => c.id !== id));
+      })
+      .catch((err) => console.error("Erro ao cancelar consulta:", err));
   };
 
   return (
-    <div className="modal-form" style={{ maxWidth: "600px" }}>
-      <h2>Agendar Consulta</h2>
+    <div className="modal-overlay">
+      <div className="modal-content modal-form">
+        <button className="modal-close" onClick={onClose}>
+          ×
+        </button>
+        <h2>Agendar Consulta</h2>
 
-      {/* Formulário de agendamento */}
-      <input
-        type="text"
-        placeholder="Nome do Cliente"
-        value={cliente}
-        onChange={(e) => setCliente(e.target.value)}
-      />
+        <input
+          type="text"
+          placeholder="Nome do Cliente"
+          value={cliente}
+          onChange={(e) => setCliente(e.target.value)}
+        />
 
-      <input
-        type="text"
-        placeholder="Nome do Pet"
-        value={pet}
-        onChange={(e) => setPet(e.target.value)}
-      />
+        <input
+          type="text"
+          placeholder="Nome do Pet"
+          value={pet}
+          onChange={(e) => setPet(e.target.value)}
+        />
 
-      <input
-        type="text"
-        placeholder="Veterinário Responsável"
-        value={veterinario}
-        onChange={(e) => setVeterinario(e.target.value)}
-      />
+        <input
+          type="text"
+          placeholder="Veterinário Responsável"
+          value={veterinario}
+          onChange={(e) => setVeterinario(e.target.value)}
+        />
 
-      <input
-        type="datetime-local"
-        value={dataHora}
-        onChange={(e) => setDataHora(e.target.value)}
-      />
+        <input
+          type="datetime-local"
+          value={dataHora}
+          onChange={(e) => setDataHora(e.target.value)}
+        />
 
-      <div className="modal-actions">
-        <button onClick={salvar}>Agendar</button>
-        <button onClick={onClose}>Fechar</button>
-      </div>
+        <div className="modal-actions">
+          <button onClick={salvar}>Agendar</button>
+          <button onClick={onClose}>Fechar</button>
+        </div>
 
-      {/* Lista de agendamentos */}
-      {agendamentos.length > 0 && (
-        <>
-          <h3 style={{ marginTop: "1rem" }}>Consultas Marcadas</h3>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ background: "#e3e3e3" }}>
-                <th>Cliente</th>
-                <th>Pet</th>
-                <th>Veterinário</th>
-                <th>Data/Hora</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {agendamentos.map((a) => (
-                <tr key={a.id}>
-                  <td>{a.cliente}</td>
-                  <td>{a.pet}</td>
-                  <td>{a.veterinario}</td>
-                  <td>
-                    <input
-                      type="datetime-local"
-                      value={a.dataHora}
-                      onChange={(e) => alterarData(a.id, e.target.value)}
-                      style={{ width: "180px" }}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      style={{ color: "#fff", background: "#e63946", border: "none", padding: "0.3rem 0.6rem" }}
-                      onClick={() => cancelarConsulta(a.id)}
-                    >
-                      Cancelar
-                    </button>
-                  </td>
+        {consultas.length > 0 && (
+          <>
+            <h3>Consultas Marcadas</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Pet</th>
+                  <th>Veterinário</th>
+                  <th>Data/Hora</th>
+                  <th>Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
+              </thead>
+              <tbody>
+                {consultas.map((c) => (
+                  <tr key={c.id}>
+                    <td>{c.cliente}</td>
+                    <td>{c.pet}</td>
+                    <td>{c.veterinario}</td>
+                    <td>{formatarParaInput(c.dataHora)}</td>
+                    <td>
+                      <button
+                        className="btn-cancelar"
+                        onClick={() => cancelarConsulta(c.id)}
+                      >
+                        Cancelar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+      </div>
     </div>
   );
 }

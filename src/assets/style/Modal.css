@@ -106,7 +106,6 @@
   box-shadow: 0 6px 14px rgba(79, 172, 254, 0.45);
 }
 
-/* Botão secundário (cancelar/fechar) */
 .modal-actions button:last-of-type {
   background: #f0f0f0;
   color: #333;
@@ -115,7 +114,6 @@
   background: #e1e1e1;
 }
 
-/* ===== Tabelas internas (ex: lista de agendamentos) ===== */
 .modal-content table {
   width: 100%;
   border-collapse: collapse;
@@ -137,7 +135,6 @@
   background: #f9f9f9;
 }
 
-/* ===== Animações ===== */
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -145,4 +142,18 @@
 @keyframes popIn {
   from { transform: scale(0.92); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
+}
+
+.btn-cancelar {
+  color: #fff;
+  background: #e63946;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-cancelar:hover {
+  background: #c82333;
 }

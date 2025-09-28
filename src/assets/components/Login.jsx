@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { PawPrint, Mail, Eye, EyeOff } from "lucide-react";
 import "../style/Login.css";
+import axios from "axios";
+
 
 function LoginPage({ onLoginSuccess }) {
   const navigate = useNavigate();
@@ -17,17 +19,20 @@ function LoginPage({ onLoginSuccess }) {
   const isEmailValid = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
   const canSubmit = email && password.length >= 6 && isEmailValid(email);
 
-  function fakeLoginApi({ email, password }) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        if (email === "admin@vet.com" && password === "password123") {
-          resolve({ ok: true, token: "fake-jwt-token" });
-        } else {
-          resolve({ ok: false, message: "Credenciais inválidas" });
-        }
-      }, 900);
-    });
+  async function loginApi({ email, password }) {
+  try {
+    const response = await axios.post(
+      "https://608d4c26c74f.ngrok-free.app/login",
+      { email, password }
+    );
+    return { ok: true, token: response.data.token };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error.response?.data?.message || "Credenciais inválidas",
+    };
   }
+}
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +49,7 @@ function LoginPage({ onLoginSuccess }) {
 
     setLoading(true);
     try {
-      const res = await fakeLoginApi({ email, password });
+      const res = await loginApi({ email, password });
       if (res.ok) {
         setSuccess(true);
         if (remember) localStorage.setItem("vet_auth_token", res.token);
