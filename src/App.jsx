@@ -1,17 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Navbar from "./assets/components/Navbar";
-import LoginPage from "./assets/components/Login";
-import PaginaInicial from "./assets/components/PaginaInicial";
+import LoginPage from "./components/Login";
+import PaginaInicial from "./components/PaginaInicial";
 
 function LayoutComNavbar({ children }) {
-  return (
-    <>
-      <Navbar />
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
 
 function App() {
