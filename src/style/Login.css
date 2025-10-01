@@ -1,9 +1,11 @@
+/* Layout geral */
 .login-wrapper {
   display: flex;
   min-height: 100vh;
   font-family: Arial, sans-serif;
 }
 
+/* Lado esquerdo (logo/ilustração) */
 .login-left {
   flex: 1;
   background-color: #b6d7d2;
@@ -30,6 +32,7 @@
   margin-top: 10px;
 }
 
+/* Lado direito (formulário) */
 .login-right {
   flex: 1;
   display: flex;
@@ -41,16 +44,19 @@
 
 .login-box {
   width: 100%;
-  max-width: 320px;
+  max-width: 400px;
   text-align: center;
+  background: #fff;
 }
 
 .welcome-text {
   font-size: 24px;
   margin-bottom: 20px;
   font-weight: 600;
+  color: #0f172a;
 }
 
+/* Formulários */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -64,6 +70,7 @@
   color: #334155;
 }
 
+/* Inputs */
 .input-group {
   position: relative;
   margin-top: 0.25rem;
@@ -75,6 +82,7 @@
   border-radius: 0.5rem;
   padding: 0.5rem 2.5rem 0.5rem 1rem;
   outline: none;
+  font-size: 0.9rem;
 }
 
 .input-field:focus {
@@ -82,7 +90,8 @@
   box-shadow: 0 0 0 2px #bae6fd;
 }
 
-.input-icon, .toggle-btn {
+.input-icon,
+.toggle-btn {
   position: absolute;
   right: 0.75rem;
   top: 50%;
@@ -101,12 +110,14 @@
   color: #94a3b8;
 }
 
+/* Dicas de senha */
 .password-hint {
   font-size: 0.75rem;
   color: #94a3b8;
   margin-top: 0.25rem;
 }
 
+/* Opções extras */
 .login-options {
   display: flex;
   align-items: center;
@@ -129,6 +140,7 @@
   text-decoration: underline;
 }
 
+/* Mensagens */
 .error-text {
   color: #dc2626;
   font-size: 0.875rem;
@@ -139,18 +151,21 @@
   font-size: 0.875rem;
 }
 
+/* Botão principal */
 .login-btn {
   width: 100%;
   background: #0284c7;
   color: #fff;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: 0.75rem;
   border: none;
   font-weight: 500;
+  font-size: 1rem;
   cursor: pointer;
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  transition: background 0.2s ease;
 }
 
 .login-btn:disabled {
@@ -162,6 +177,7 @@
   background: #0369a1;
 }
 
+/* Spinner */
 .spinner {
   width: 20px;
   height: 20px;
@@ -177,6 +193,22 @@
   }
 }
 
+/* Links auxiliares */
+.register-link {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.register-link span {
+  color: #0284c7;
+  cursor: pointer;
+}
+
+.register-link span:hover {
+  text-decoration: underline;
+}
+
 .demo-text {
   margin-top: 1.5rem;
   font-size: 0.875rem;
@@ -184,6 +216,7 @@
   text-align: center;
 }
 
+/* Responsividade */
 @media (max-width: 768px) {
   .login-left {
     display: none;
@@ -193,4 +226,3 @@
     padding: 1.5rem;
   }
 }
-

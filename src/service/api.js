@@ -1,11 +1,21 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8082/api/v1",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 10000,
+  baseURL: "https://45f7b95f91fa.ngrok-free.app/api/v1",
+  headers: { "Content-Type": "application/json" },
+});
+
+api.interceptors.request.use((config) => {
+  const token =
+    localStorage.getItem("vet_auth_token") ||
+    sessionStorage.getItem("vet_auth_token");
+
+  if (token) {
+    config.headers.Authorization = token; // só o token puro
+    console.log("🔐 Enviando token:", token);
+  }
+
+  return config;
 });
 
 export default api;
